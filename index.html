@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f6f5f1" />
+    <title>Lexicon / 语言观察库</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand-lockup">
+          <div class="brand-mark">L</div>
+          <div>
+            <div class="brand-name">Lexicon</div>
+            <div class="brand-subtitle">语言观察库</div>
+          </div>
+        </div>
+
+        <button class="capture-button" id="openCapture" type="button">
+          <span class="button-plus">+</span>
+          <span>记录新发现</span>
+          <span class="shortcut">N</span>
+        </button>
+
+        <nav class="primary-nav" aria-label="主导航">
+          <button class="nav-item active" data-view="all" type="button">
+            <span class="nav-icon">◌</span><span>全部观察</span><span class="nav-count" id="allCount">12</span>
+          </button>
+          <button class="nav-item" data-view="inbox" type="button">
+            <span class="nav-icon">□</span><span>待整理</span><span class="nav-count" id="inboxCount">3</span>
+          </button>
+          <button class="nav-item" data-view="saved" type="button">
+            <span class="nav-icon">♡</span><span>我的收藏</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-section">
+          <div class="sidebar-heading">浏览方式</div>
+          <button class="nav-item" data-view="expressions" type="button"><span class="nav-icon">Aa</span><span>表达</span><span class="nav-count">8</span></button>
+          <button class="nav-item" data-view="works" type="button"><span class="nav-icon">▤</span><span>作品</span><span class="nav-count">6</span></button>
+          <button class="nav-item" data-view="themes" type="button"><span class="nav-icon">#</span><span>主题</span><span class="nav-count">14</span></button>
+        </div>
+
+        <div class="sidebar-section topic-section">
+          <div class="sidebar-heading">最近关注</div>
+          <button class="topic-link" type="button" data-topic="荣誉">荣誉与忠诚 <span>6</span></button>
+          <button class="topic-link" type="button" data-topic="漫游">漫游与移动 <span>4</span></button>
+          <button class="topic-link" type="button" data-topic="死亡">死亡与祭奠 <span>3</span></button>
+          <button class="topic-link" type="button" data-topic="阶级">阶级与距离 <span>2</span></button>
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="local-status"><span class="status-dot"></span><span>仅保存于此设备</span></div>
+          <button class="profile-button" type="button"><span class="profile-avatar">T</span><span>我的空间</span><span class="more">···</span></button>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div class="mobile-brand"><div class="brand-mark">L</div><span>Lexicon</span></div>
+          <div class="breadcrumbs"><span>我的空间</span><span class="crumb-separator">/</span><strong id="pageTitle">全部观察</strong></div>
+          <div class="topbar-actions">
+            <label class="search-box">
+              <span class="search-icon">⌕</span>
+              <input id="searchInput" type="search" placeholder="搜索表达、作品或主题" />
+              <span class="search-key">/</span>
+            </label>
+            <button class="icon-button" type="button" title="导出数据" id="exportButton">↑</button>
+            <button class="mobile-menu" type="button" aria-label="打开菜单">☰</button>
+          </div>
+        </header>
+
+        <div class="content-scroll">
+          <section class="welcome-row">
+            <div>
+              <p class="eyebrow">WEDNESDAY, AUGUST 26</p>
+              <h1>继续你的语言考察。</h1>
+              <p class="welcome-copy">你已经留下 <strong id="observationTotal">12</strong> 条观察，今天重新遇见一条。</p>
+            </div>
+            <button class="text-button" id="openRandom" type="button">换一条 <span>↗</span></button>
+          </section>
+
+          <section class="rediscovery-card" id="rediscoveryCard">
+            <div class="rediscovery-label"><span class="spark">✦</span> 重新遇见 <span class="rediscovery-date">记录于 2025.11.08</span></div>
+            <div class="rediscovery-content">
+              <div class="rediscovery-quote">“<span id="rediscoveryQuote">Honor my man.</span>”</div>
+              <div class="rediscovery-meta"><span id="rediscoverySource">The Odyssey · Emily Wilson</span><span class="meta-separator">·</span><span id="rediscoveryTopic">荣誉与忠诚</span></div>
+              <p id="rediscoveryNote">这里的 man 不是泛指“人”，而是关系中的称谓：一个被我承认、愿意为之作证的人。</p>
+            </div>
+            <div class="rediscovery-footer">
+              <button class="outline-button" id="openRediscovery" type="button">打开这条观察</button>
+              <span class="rediscovery-hint">它与你的 3 条记录有关</span>
+            </div>
+          </section>
+
+          <section class="library-section">
+            <div class="section-header">
+              <div>
+                <h2>你的观察</h2>
+                <p>从原文出发，慢慢形成自己的解释。</p>
+              </div>
+              <div class="view-controls">
+                <div class="segmented-control" role="tablist" aria-label="内容类型">
+                  <button class="segment active" data-filter="all" type="button">全部</button>
+                  <button class="segment" data-filter="expression" type="button">表达</button>
+                  <button class="segment" data-filter="work" type="button">作品</button>
+                </div>
+                <button class="icon-button subtle" id="sortButton" type="button" title="切换排序">↕</button>
+              </div>
+            </div>
+            <div class="filter-row" id="filterRow">
+              <button class="filter-chip active" data-status="all" type="button">全部 <span id="visibleCount">12</span></button>
+              <button class="filter-chip" data-status="inbox" type="button">待整理 <span>3</span></button>
+              <button class="filter-chip" data-status="finished" type="button">已沉淀 <span>9</span></button>
+            </div>
+            <div class="entry-grid" id="entryGrid"></div>
+            <div class="empty-state" id="emptyState" hidden>
+              <div class="empty-icon">⌕</div>
+              <h3>还没有找到相关观察</h3>
+              <p>换个关键词，或者记录一个新的语言发现。</p>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <aside class="detail-panel" id="detailPanel" aria-label="观察详情">
+        <div class="detail-topbar">
+          <span class="detail-label">观察详情</span>
+          <div class="detail-actions"><button class="icon-button subtle" id="favoriteButton" type="button" title="收藏">♡</button><button class="icon-button subtle" id="closeDetail" type="button" title="关闭">×</button></div>
+        </div>
+        <div class="detail-content" id="detailContent"></div>
+      </aside>
+    </div>
+
+    <div class="modal-backdrop" id="captureModal" hidden>
+      <section class="capture-modal" role="dialog" aria-modal="true" aria-labelledby="captureTitle">
+        <div class="modal-header"><div><p class="eyebrow">QUICK CAPTURE</p><h2 id="captureTitle">记录一个语言发现</h2></div><button class="icon-button subtle" id="closeCapture" type="button" title="关闭">×</button></div>
+        <form id="captureForm">
+          <label class="field-label">你看到的表达 <span>*</span><textarea name="quote" required rows="2" placeholder="例如：Honor my man."></textarea></label>
+          <div class="form-grid">
+            <label class="field-label">它来自哪里<input name="source" placeholder="作品、作者或链接" /></label>
+            <label class="field-label">内容类型<select name="type"><option value="expression">表达</option><option value="work">作品</option></select></label>
+          </div>
+          <label class="field-label">当时为什么注意到它<textarea name="note" rows="3" placeholder="先留下直觉，不需要现在就解释完整"></textarea></label>
+          <label class="field-label">主题标签<input name="topic" placeholder="例如：荣誉、死亡、距离" /></label>
+          <div class="capture-separator"></div>
+          <div class="modal-footer"><span class="draft-note">保存后会进入“待整理”</span><button class="cancel-button" id="cancelCapture" type="button">取消</button><button class="primary-button" type="submit">保存观察 <span>↗</span></button></div>
+        </form>
+      </section>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
