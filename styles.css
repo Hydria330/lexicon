@@ -24,7 +24,8 @@
 body { margin: 0; min-width: 320px; background: var(--paper); }
 button, input, textarea, select { font: inherit; }
 button { cursor: pointer; }
-.app-shell { min-height: 100vh; display: grid; grid-template-columns: 238px minmax(560px, 1fr) 354px; }
+.app-shell { min-height: 100vh; display: grid; grid-template-columns: 238px minmax(560px, 1fr); }
+.app-shell.drawer-open { grid-template-columns: 238px minmax(420px, 1fr) minmax(360px, 420px); }
 
 .sidebar { background: #efeee9; border-right: 1px solid var(--line); display: flex; flex-direction: column; padding: 27px 15px 18px; }
 .brand-lockup { display: flex; align-items: center; gap: 11px; padding: 0 13px 29px; }
@@ -70,7 +71,7 @@ button { cursor: pointer; }
 .icon-button { width: 32px; height: 32px; border: 1px solid var(--line); border-radius: 4px; color: #7f8179; background: transparent; font-size: 17px; display: grid; place-items: center; }
 .icon-button:hover { color: var(--green-deep); background: var(--white); }
 .icon-button.subtle { border-color: transparent; }
-.mobile-brand, .mobile-menu { display: none; }
+.mobile-brand, .mobile-menu, .mobile-capture { display: none; }
 .content-scroll { max-width: 880px; margin: 0 auto; padding: 47px 45px 70px; }
 .welcome-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; }
 .eyebrow { color: #a3a39a; letter-spacing: .14em; font-size: 9px; margin: 0 0 10px; }
@@ -126,14 +127,16 @@ h2 { font: 400 21px Georgia, "Songti SC", serif; margin-bottom: 6px; }
 .empty-state h3 { font: 400 18px Georgia, serif; color: #5d6058; margin: 15px 0 6px; }
 .empty-state p { font-size: 11px; }
 
-.detail-panel { border-left: 1px solid var(--line); background: var(--panel); min-width: 0; }
+.detail-panel { display: none; min-width: 0; border-left: 1px solid var(--line); background: var(--panel); overflow-y: auto; }
+.app-shell.drawer-open .detail-panel { display: block; grid-column: 3; grid-row: 1; min-height: 100vh; }
 .detail-topbar { height: 73px; border-bottom: 1px solid var(--line); padding: 0 25px; display: flex; align-items: center; justify-content: space-between; }
 .detail-label { color: #92938b; font-size: 10px; letter-spacing: .1em; }
 .detail-actions { display: flex; gap: 2px; }
-.detail-content { padding: 33px 27px 40px; }
+.detail-content { padding: 33px 31px 40px; }
 .detail-type { color: var(--green); font-size: 9px; letter-spacing: .15em; text-transform: uppercase; margin-bottom: 20px; }
 .detail-title { font: 400 27px/1.3 Georgia, serif; margin-bottom: 9px; }
 .detail-translation { color: #aaa9a0; font-size: 11px; margin-bottom: 22px; }
+.detail-translation .detail-small-label { display: block; }
 .detail-source-block { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 14px 0; margin-bottom: 24px; }
 .detail-small-label { color: #adada5; font-size: 9px; text-transform: uppercase; letter-spacing: .12em; margin-bottom: 7px; }
 .detail-source { color: #60635b; font-size: 11px; line-height: 1.6; }
@@ -145,10 +148,15 @@ h2 { font: 400 21px Georgia, "Songti SC", serif; margin-bottom: 6px; }
 .relation { border: 1px solid var(--line-strong); color: #73766d; border-radius: 3px; padding: 5px 7px; font-size: 10px; background: #fff; }
 .detail-footer { display: flex; justify-content: space-between; align-items: center; color: #aaa9a0; font-size: 9px; border-top: 1px solid var(--line); padding-top: 16px; }
 .favorite-active { color: var(--rose) !important; }
+.empty-field { color: #b9bab2; font-style: italic; }
+.detail-actions .icon-button { color: #8b8d85; }
+.detail-actions .icon-button:hover { color: var(--green-deep); }
+.empty-insight { color: #b0b1a9; font-style: italic; }
 
 .modal-backdrop { position: fixed; inset: 0; background: rgba(35, 41, 35, .32); display: grid; place-items: center; z-index: 10; padding: 20px; }
 .modal-backdrop[hidden] { display: none; }
-.capture-modal { width: min(560px, 100%); background: var(--panel); border-radius: 5px; box-shadow: var(--shadow); padding: 27px 29px 23px; }
+.capture-modal { width: min(560px, 100%); max-height: calc(100vh - 40px); overflow-y: auto; background: var(--panel); border-radius: 5px; box-shadow: var(--shadow); padding: 27px 29px 23px; }
+.edit-modal { width: min(650px, 100%); }
 .modal-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 25px; }
 .modal-header h2 { margin: 0; font-size: 23px; }
 .field-label { display: grid; gap: 7px; color: #73756c; font-size: 10px; margin-bottom: 17px; }
@@ -164,20 +172,42 @@ h2 { font: 400 21px Georgia, "Songti SC", serif; margin-bottom: 6px; }
 .cancel-button { border: 1px solid var(--line-strong); background: transparent; color: #85867e; }
 .primary-button { border: 1px solid var(--green-deep); background: var(--green-deep); color: #fff; }
 .primary-button span { margin-left: 6px; }
+.mode-intro { color: #92938b; font-size: 11px; line-height: 1.7; margin: -7px 0 17px; }
+.mode-options { display: grid; gap: 10px; }
+.mode-option { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--ink); padding: 15px 14px; transition: border-color .2s, background .2s, transform .2s; }
+.mode-option:hover { border-color: #9db0a1; background: #fcfdfb; transform: translateY(-1px); }
+.mode-option.featured { border-color: #b7c5b9; background: #f1f6f0; }
+.mode-icon { width: 27px; height: 27px; display: grid; place-items: center; border-radius: 50%; background: var(--green-soft); color: var(--green-deep); font-size: 14px; flex: 0 0 auto; }
+.mode-option:not(.featured) .mode-icon { background: var(--ochre-soft); color: var(--ochre); }
+.mode-option strong { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.mode-option small { display: block; color: #9b9c94; font-size: 10px; }
+.mode-arrow { margin-left: auto; color: #94a99a; font-size: 16px; }
+.capture-mode-picker, #captureForm { display: none; }
+.capture-mode-picker.active, #captureForm.active { display: block; }
+.selected-mode-row { display: flex; align-items: center; justify-content: space-between; margin: -3px 0 19px; }
+.back-to-mode { border: 0; background: transparent; color: #8b8d84; font-size: 10px; padding: 0; }
+.back-to-mode:hover { color: var(--green-deep); }
+.selected-mode-label { color: var(--green); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
+.detailed-fields { display: none; }
+#captureForm.detailed-mode .detailed-fields, #captureForm.detailed-mode .detailed-field { display: block; }
+#captureForm.rough-mode .detailed-field { display: none; }
 
 @media (max-width: 1180px) {
   .app-shell { grid-template-columns: 218px minmax(520px, 1fr); }
-  .detail-panel { position: fixed; z-index: 5; right: 0; top: 0; bottom: 0; width: min(354px, 90vw); transform: translateX(100%); transition: transform .25s ease; box-shadow: -15px 0 40px rgba(30,38,31,.1); }
-  .detail-panel.open { transform: translateX(0); }
+  .app-shell.drawer-open { grid-template-columns: 218px minmax(0, 1fr) minmax(340px, 38vw); }
 }
 @media (max-width: 760px) {
   .app-shell { display: block; }
+  .app-shell.drawer-open { display: block; }
+  .app-shell.drawer-open .detail-panel { position: fixed; z-index: 12; inset: 0 0 0 auto; width: min(420px, 92vw); min-height: 0; box-shadow: -18px 0 45px rgba(30,38,31,.12); }
   .sidebar { position: fixed; z-index: 8; inset: 0 auto 0 0; width: 238px; transform: translateX(-100%); transition: transform .25s ease; box-shadow: 15px 0 30px rgba(30,38,31,.1); }
   .sidebar.open { transform: translateX(0); }
   .topbar { height: 63px; padding: 0 17px; }
   .breadcrumbs { display: none; }
   .mobile-brand { display: flex; align-items: center; gap: 8px; font: 600 16px Georgia, serif; }
   .mobile-brand .brand-mark { width: 27px; height: 27px; font-size: 15px; }
+  .mobile-capture { display: grid; place-items: center; width: 30px; height: 30px; border: 1px solid var(--line); border-radius: 4px; background: transparent; color: var(--green-deep); font-size: 20px; line-height: 1; }
+  .mobile-capture:hover { background: #fff; }
   .search-box { width: 34px; padding: 0 8px; border-color: transparent; background: transparent; }
   .search-box input, .search-key { display: none; }
   .mobile-menu { display: block; border: 0; background: transparent; color: #777a72; font-size: 19px; }

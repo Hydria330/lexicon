@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f6f5f1" />
     <title>Lexicon / 语言观察库</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=20260827-4" />
   </head>
   <body>
     <div class="app-shell">
@@ -29,7 +29,7 @@
             <span class="nav-icon">◌</span><span>全部观察</span><span class="nav-count" id="allCount">12</span>
           </button>
           <button class="nav-item" data-view="inbox" type="button">
-            <span class="nav-icon">□</span><span>待整理</span><span class="nav-count" id="inboxCount">3</span>
+            <span class="nav-icon">□</span><span>Waiting</span><span class="nav-count" id="inboxCount">3</span>
           </button>
           <button class="nav-item" data-view="saved" type="button">
             <span class="nav-icon">♡</span><span>我的收藏</span>
@@ -38,8 +38,8 @@
 
         <div class="sidebar-section">
           <div class="sidebar-heading">浏览方式</div>
-          <button class="nav-item" data-view="expressions" type="button"><span class="nav-icon">Aa</span><span>表达</span><span class="nav-count">8</span></button>
-          <button class="nav-item" data-view="works" type="button"><span class="nav-icon">▤</span><span>作品</span><span class="nav-count">6</span></button>
+          <button class="nav-item" data-view="expressions" type="button"><span class="nav-icon">Aa</span><span>Phrase</span><span class="nav-count">8</span></button>
+          <button class="nav-item" data-view="works" type="button"><span class="nav-icon">▤</span><span>Work</span><span class="nav-count">6</span></button>
           <button class="nav-item" data-view="themes" type="button"><span class="nav-icon">#</span><span>主题</span><span class="nav-count">14</span></button>
         </div>
 
@@ -62,6 +62,7 @@
           <div class="mobile-brand"><div class="brand-mark">L</div><span>Lexicon</span></div>
           <div class="breadcrumbs"><span>我的空间</span><span class="crumb-separator">/</span><strong id="pageTitle">全部观察</strong></div>
           <div class="topbar-actions">
+            <button class="mobile-capture" id="mobileCapture" type="button" aria-label="记录新发现" title="记录新发现">+</button>
             <label class="search-box">
               <span class="search-icon">⌕</span>
               <input id="searchInput" type="search" placeholder="搜索表达、作品或主题" />
@@ -102,7 +103,7 @@
                 <p>从原文出发，慢慢形成自己的解释。</p>
               </div>
               <div class="view-controls">
-                <div class="segmented-control" role="tablist" aria-label="内容类型">
+                <div class="segmented-control" role="tablist" aria-label="Type">
                   <button class="segment active" data-filter="all" type="button">全部</button>
                   <button class="segment" data-filter="expression" type="button">表达</button>
                   <button class="segment" data-filter="work" type="button">作品</button>
@@ -112,8 +113,8 @@
             </div>
             <div class="filter-row" id="filterRow">
               <button class="filter-chip active" data-status="all" type="button">全部 <span id="visibleCount">12</span></button>
-              <button class="filter-chip" data-status="inbox" type="button">待整理 <span>3</span></button>
-              <button class="filter-chip" data-status="finished" type="button">已沉淀 <span>9</span></button>
+              <button class="filter-chip" data-status="inbox" type="button">Waiting <span>3</span></button>
+              <button class="filter-chip" data-status="finished" type="button">Done <span>9</span></button>
             </div>
             <div class="entry-grid" id="entryGrid"></div>
             <div class="empty-state" id="emptyState" hidden>
@@ -127,8 +128,13 @@
 
       <aside class="detail-panel" id="detailPanel" aria-label="观察详情">
         <div class="detail-topbar">
-          <span class="detail-label">观察详情</span>
-          <div class="detail-actions"><button class="icon-button subtle" id="favoriteButton" type="button" title="收藏">♡</button><button class="icon-button subtle" id="closeDetail" type="button" title="关闭">×</button></div>
+          <span class="detail-label">Observation</span>
+          <div class="detail-actions">
+            <button class="icon-button subtle" id="favoriteButton" type="button" title="收藏" aria-label="收藏">♡</button>
+            <button class="icon-button subtle" id="editEntry" type="button" title="Deeper" aria-label="Deeper">✎</button>
+            <button class="icon-button subtle" id="markDone" type="button" title="Done" aria-label="Done">✓</button>
+            <button class="icon-button subtle" id="closeDetail" type="button" title="关闭抽屉" aria-label="关闭抽屉">×</button>
+          </div>
         </div>
         <div class="detail-content" id="detailContent"></div>
       </aside>
@@ -137,19 +143,69 @@
     <div class="modal-backdrop" id="captureModal" hidden>
       <section class="capture-modal" role="dialog" aria-modal="true" aria-labelledby="captureTitle">
         <div class="modal-header"><div><p class="eyebrow">QUICK CAPTURE</p><h2 id="captureTitle">记录一个语言发现</h2></div><button class="icon-button subtle" id="closeCapture" type="button" title="关闭">×</button></div>
-        <form id="captureForm">
-          <label class="field-label">你看到的表达 <span>*</span><textarea name="quote" required rows="2" placeholder="例如：Honor my man."></textarea></label>
-          <div class="form-grid">
-            <label class="field-label">它来自哪里<input name="source" placeholder="作品、作者或链接" /></label>
-            <label class="field-label">内容类型<select name="type"><option value="expression">表达</option><option value="work">作品</option></select></label>
+        <div class="capture-mode-picker" id="captureModePicker">
+          <p class="mode-intro">先选择这次记录的深度，之后仍然可以在抽屉里继续编辑。</p>
+          <div class="mode-options">
+            <button class="mode-option" data-mode="rough" type="button">
+              <span class="mode-icon">✦</span>
+              <span><strong>粗略记录</strong><small>先留下原文和直觉，稍后整理</small></span>
+              <span class="mode-arrow">↗</span>
+            </button>
+            <button class="mode-option featured" data-mode="detailed" type="button">
+              <span class="mode-icon">◌</span>
+              <span><strong>详细完整记录</strong><small>现在就把语境、观察和理解写完整</small></span>
+              <span class="mode-arrow">↗</span>
+            </button>
           </div>
-          <label class="field-label">当时为什么注意到它<textarea name="note" rows="3" placeholder="先留下直觉，不需要现在就解释完整"></textarea></label>
-          <label class="field-label">主题标签<input name="topic" placeholder="例如：荣誉、死亡、距离" /></label>
+        </div>
+        <form id="captureForm">
+          <div class="selected-mode-row"><button class="back-to-mode" id="backToMode" type="button">← 改变记录方式</button><span class="selected-mode-label" id="selectedModeLabel"></span></div>
+          <label class="field-label">Phrase or excerpt <span>*</span><textarea name="quote" required rows="2" placeholder="For example: Honor my man."></textarea></label>
+          <div class="form-grid">
+            <label class="field-label">Home<input name="source" placeholder="Work, author or link" /></label>
+            <label class="field-label">Type<select name="type"><option value="expression">Phrase</option><option value="work">Work</option></select></label>
+          </div>
+          <label class="field-label detailed-field">Background<textarea name="context" rows="2" placeholder="Who said it, where, and what was happening"></textarea></label>
+          <label class="field-label">Prejudice<textarea name="note" rows="3" placeholder="Write your first impression before the explanation is complete"></textarea></label>
+          <div class="detailed-fields">
+            <label class="field-label">Homer's Epic<input name="translation" placeholder="Your translation or a literal rendering" /></label>
+            <label class="field-label">X<textarea name="reflection" rows="3" placeholder="Write the judgment you formed after thinking it through"></textarea></label>
+            <label class="field-label">Use now<textarea name="useNow" rows="3" placeholder="Write a sentence that uses this expression naturally"></textarea></label>
+            <label class="field-label">Fix it<textarea name="fixIt" rows="3" placeholder="Compare the correction, nuance or better alternative"></textarea></label>
+            <label class="field-label">Sister<input name="relations" placeholder="Separate related expressions with commas" /></label>
+          </div>
+          <label class="field-label">Flag<input name="topic" placeholder="For example: honor, death, distance" /></label>
           <div class="capture-separator"></div>
-          <div class="modal-footer"><span class="draft-note">保存后会进入“待整理”</span><button class="cancel-button" id="cancelCapture" type="button">取消</button><button class="primary-button" type="submit">保存观察 <span>↗</span></button></div>
+          <div class="modal-footer"><span class="draft-note" id="captureDraftNote">保存后会进入 Waiting</span><button class="cancel-button" id="cancelCapture" type="button">取消</button><button class="primary-button" type="submit">保存观察 <span>↗</span></button></div>
         </form>
       </section>
     </div>
-    <script src="app.js"></script>
+
+    <div class="modal-backdrop" id="editModal" hidden>
+      <section class="capture-modal edit-modal" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+        <div class="modal-header"><div><p class="eyebrow">EDIT OBSERVATION</p><h2 id="editTitle">Deeper</h2></div><button class="icon-button subtle" id="closeEdit" type="button" title="关闭">×</button></div>
+        <form id="editForm">
+          <label class="field-label">Title <span>*</span><textarea name="title" required rows="2"></textarea></label>
+          <div class="form-grid">
+            <label class="field-label">Home<input name="source" placeholder="Work, author or link" /></label>
+            <label class="field-label">Type<select name="type"><option value="expression">Phrase</option><option value="work">Work</option></select></label>
+          </div>
+          <label class="field-label">Homer's Epic<input name="translation" placeholder="Your translation or a literal rendering" /></label>
+          <label class="field-label">Background<textarea name="context" rows="3" placeholder="Who said it, where, and what was happening"></textarea></label>
+          <label class="field-label">Prejudice<textarea name="note" rows="4" placeholder="Write your first impression before the explanation is complete"></textarea></label>
+          <label class="field-label">X<textarea name="reflection" rows="4" placeholder="Write the judgment you formed after thinking it through"></textarea></label>
+          <label class="field-label">Use now<textarea name="useNow" rows="3" placeholder="Write a sentence that uses this expression naturally"></textarea></label>
+          <label class="field-label">Fix it<textarea name="fixIt" rows="3" placeholder="Compare the correction, nuance or better alternative"></textarea></label>
+          <div class="form-grid">
+            <label class="field-label">Flag<input name="topic" placeholder="For example: honor, death, distance" /></label>
+            <label class="field-label">State<select name="status"><option value="inbox">Waiting</option><option value="finished">Done</option></select></label>
+          </div>
+          <label class="field-label">Sister<input name="relations" placeholder="Separate related expressions with commas" /></label>
+          <div class="capture-separator"></div>
+          <div class="modal-footer"><span class="draft-note">所有内容都可以继续修改</span><button class="cancel-button" id="cancelEdit" type="button">取消</button><button class="primary-button" type="submit">保存修改 <span>↗</span></button></div>
+        </form>
+      </section>
+    </div>
+    <script src="app.js?v=20260827-4"></script>
   </body>
 </html>
